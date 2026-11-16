@@ -8,6 +8,7 @@ from attrs import field as _attrs_field
 
 from ..models.form_schema_element_parameter_capture_methods_item import FormSchemaElementParameterCaptureMethodsItem
 from ..models.form_schema_element_parameter_cardinality import FormSchemaElementParameterCardinality
+from ..models.form_schema_element_parameter_file_types_item import FormSchemaElementParameterFileTypesItem
 from ..models.form_schema_element_parameter_presentation import FormSchemaElementParameterPresentation
 from ..types import UNSET, Unset
 
@@ -27,41 +28,38 @@ class FormSchemaElementParameter:
     Attributes:
         prefix_formula (str | Unset): For fields of type 'serial', provides a formula that will be used to compute the
             prefix of the generated serial number.
-        digits (int | Unset): For fields of type 'serial', indicates how many digits long the generated serial number
-            will be
+        digits (int | Unset): Number of digits used for the numeric portion of a serial value.
         units (str | Unset): For fields of type 'quantity', describes the units of the quantity
-        aggregation (str | Unset): For fields of type 'quantity', describes the aggregation method e.g. 'sum'. Not
-            currently used(?)
+        aggregation (str | Unset): Legacy quantity aggregation setting, such as 'sum'; current server behavior is
+            unverified.
         input_mask (str | Unset): For fields of type 'FREE_TEXT' (user type 'Text' or 'Barcode'), provides a pattern-
             based input mask
-        barcode (bool | Unset): For fields of type 'FREE_TEXT' (user type 'Text' or 'Barcode'), true when field is
-            barcode
+        barcode (bool | Unset): Enables barcode-scanner input for a text field during data entry.
         formula (str | Unset): For fields of type 'calculated', provides the formula for the field's value
-        cardinality (FormSchemaElementParameterCardinality | Unset): For fields of type 'enumerated' (user type 'Single
-            selection' or 'Multiple selection'), indicates whether single or multiple select
-        values (list[FormSchemaElementParameterValue] | Unset): For fields of type 'enumerated' (user type 'Single
-            selection' or 'Multiple selection'), provided the list of valid choices
-        presentation (FormSchemaElementParameterPresentation | Unset): For fields of type 'enumerated' (user type
-            'Single selection' or 'Multiple selection'), indicate whether shown as dropdown or not. Only relevant for
-            multiple selection, i.e. where cardinality: multiple
-        range_ (list[FormSchemaElementParameterRangeItem] | Unset): For fields of type 'reference' or
-            'multiselectreference' (user type 'Reference', 'User', or 'Multiple Reference'), provides the id of the form
-            that this field references. For 'User', this reference is '{dbid}@users'.
-        lookup_configs (list[FormSchemaElementParameterLookup] | Unset): For fields of type 'reference', specifies the
-            lookup configuration for the field.
-        form_id (str | Unset): For fields of type 'subform' and 'reversereference', provides the id of the form/subform
-            that this field references
-        field_id (str | Unset): For fields of type 'reversereference', provides the id of the reference field on the
-            form that this field references
-        capture_methods (list[FormSchemaElementParameterCaptureMethodsItem] | Unset): For fields of type 'attachment',
-            indicates which types of attachments can be added.
-        required_accuracy (int | Unset): For fields of type 'geopoint', indicates the accuracy required when
-            automatically specifying location.
+        cardinality (FormSchemaElementParameterCardinality | Unset): For enumerated and attachment fields, single
+            permits at most one value; multiple permits multiple values.
+        values (list[FormSchemaElementParameterValue] | Unset): Choices available for an enumerated field.
+        presentation (FormSchemaElementParameterPresentation | Unset): Display style for enumerated choices: automatic,
+            radio_button, or dropdown.
+        range_ (list[FormSchemaElementParameterRangeItem] | Unset): Referenced form for reference or
+            multiselectreference fields. Contains exactly one entry; user references target '{dbid}@users'.
+        lookup_configs (list[FormSchemaElementParameterLookup] | Unset): Custom record lookups for a reference field,
+            pairing formulas with labels.
+        form_id (str | Unset): For subform fields, the child form ID. For reversereference fields, the form containing
+            the reference back to this form.
+        field_id (str | Unset): For reversereference fields, the reference field on formId that points back to this
+            form.
+        capture_methods (list[FormSchemaElementParameterCaptureMethodsItem] | Unset): Attachment input methods enabled
+            during data entry: FILE, SIGNATURE, CAMERA, or AUDIO.
+        required_accuracy (float | Unset): Required GPS accuracy in meters for geopoint capture.
         manual_entry_allowed (bool | Unset): For fields of type 'geopoint', true when manual entry of location is
             allowed.
         indentation_level (int | Unset): For fields of type 'section', indicates the level of indentation of the
             heading.
         translation_config (FormSchemaElementParameterTranslation | Unset):
+        file_types (list[FormSchemaElementParameterFileTypesItem] | Unset): Accepted attachment categories for FILE
+            capture: PDF, IMAGE, OFFICE_DOCUMENT, VIDEO, AUDIO. Omitted or empty accepts any type. Content enforcement
+            currently applies on self-managed deployments.
     """
 
     prefix_formula: str | Unset = UNSET
@@ -79,10 +77,11 @@ class FormSchemaElementParameter:
     form_id: str | Unset = UNSET
     field_id: str | Unset = UNSET
     capture_methods: list[FormSchemaElementParameterCaptureMethodsItem] | Unset = UNSET
-    required_accuracy: int | Unset = UNSET
+    required_accuracy: float | Unset = UNSET
     manual_entry_allowed: bool | Unset = UNSET
     indentation_level: int | Unset = UNSET
     translation_config: FormSchemaElementParameterTranslation | Unset = UNSET
+    file_types: list[FormSchemaElementParameterFileTypesItem] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -150,6 +149,13 @@ class FormSchemaElementParameter:
         if not isinstance(self.translation_config, Unset):
             translation_config = self.translation_config.to_dict()
 
+        file_types: list[str] | Unset = UNSET
+        if not isinstance(self.file_types, Unset):
+            file_types = []
+            for file_types_item_data in self.file_types:
+                file_types_item = file_types_item_data.value
+                file_types.append(file_types_item)
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update({})
@@ -191,6 +197,8 @@ class FormSchemaElementParameter:
             field_dict["indentationLevel"] = indentation_level
         if translation_config is not UNSET:
             field_dict["translationConfig"] = translation_config
+        if file_types is not UNSET:
+            field_dict["fileTypes"] = file_types
 
         return field_dict
 
@@ -283,6 +291,15 @@ class FormSchemaElementParameter:
         else:
             translation_config = FormSchemaElementParameterTranslation.from_dict(_translation_config)
 
+        _file_types = d.pop("fileTypes", UNSET)
+        file_types: list[FormSchemaElementParameterFileTypesItem] | Unset = UNSET
+        if _file_types is not UNSET:
+            file_types = []
+            for file_types_item_data in _file_types:
+                file_types_item = FormSchemaElementParameterFileTypesItem(file_types_item_data)
+
+                file_types.append(file_types_item)
+
         form_schema_element_parameter = cls(
             prefix_formula=prefix_formula,
             digits=digits,
@@ -303,6 +320,7 @@ class FormSchemaElementParameter:
             manual_entry_allowed=manual_entry_allowed,
             indentation_level=indentation_level,
             translation_config=translation_config,
+            file_types=file_types,
         )
 
         form_schema_element_parameter.additional_properties = d

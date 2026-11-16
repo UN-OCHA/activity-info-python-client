@@ -30,9 +30,11 @@ from .form import Form
 from .form_permissions import FormPermissions
 from .form_schema import FormSchema
 from .form_schema_element import FormSchemaElement
+from .form_schema_element_metadata import FormSchemaElementMetadata
 from .form_schema_element_parameter import FormSchemaElementParameter
 from .form_schema_element_parameter_capture_methods_item import FormSchemaElementParameterCaptureMethodsItem
 from .form_schema_element_parameter_cardinality import FormSchemaElementParameterCardinality
+from .form_schema_element_parameter_file_types_item import FormSchemaElementParameterFileTypesItem
 from .form_schema_element_parameter_lookup import FormSchemaElementParameterLookup
 from .form_schema_element_parameter_presentation import FormSchemaElementParameterPresentation
 from .form_schema_element_parameter_range_item import FormSchemaElementParameterRangeItem
@@ -41,6 +43,7 @@ from .form_schema_element_parameter_value import FormSchemaElementParameterValue
 from .form_schema_element_type import FormSchemaElementType
 from .form_tree import FormTree
 from .form_tree_forms import FormTreeForms
+from .geo_point_default_value import GeoPointDefaultValue
 from .get_databases_response import GetDatabasesResponse
 from .get_form_records_response_200_item import GetFormRecordsResponse200Item
 from .grant import Grant
@@ -114,9 +117,11 @@ __all__ = (
     "FormPermissions",
     "FormSchema",
     "FormSchemaElement",
+    "FormSchemaElementMetadata",
     "FormSchemaElementParameter",
     "FormSchemaElementParameterCaptureMethodsItem",
     "FormSchemaElementParameterCardinality",
+    "FormSchemaElementParameterFileTypesItem",
     "FormSchemaElementParameterLookup",
     "FormSchemaElementParameterPresentation",
     "FormSchemaElementParameterRangeItem",
@@ -125,6 +130,7 @@ __all__ = (
     "FormSchemaElementType",
     "FormTree",
     "FormTreeForms",
+    "GeoPointDefaultValue",
     "GetDatabasesResponse",
     "GetFormRecordsResponse200Item",
     "Grant",

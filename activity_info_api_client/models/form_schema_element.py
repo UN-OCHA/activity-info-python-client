@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
+from ..models.form_schema_element_metadata import FormSchemaElementMetadata
 from ..models.form_schema_element_type import FormSchemaElementType
 from ..types import UNSET, Unset
 
 if TYPE_CHECKING:
     from ..models.form_schema_element_parameter import FormSchemaElementParameter
+    from ..models.geo_point_default_value import GeoPointDefaultValue
 
 
 T = TypeVar("T", bound="FormSchemaElement")
@@ -22,11 +24,12 @@ class FormSchemaElement:
     Attributes:
         id (str): An immutable CUID for this field that is unique within the form
         label (str): A short human-friendly label for this field
-        required (bool): If true, a value for this field must be provided Default: False.
-        type_ (FormSchemaElementType): The field type.
+        required (bool): Requires a value when true, subject to requiredCondition when specified. Default: False.
+        type_ (FormSchemaElementType): Field type, including non-value elements such as note and section. The fortnight
+            type is deprecated.
         code (str | Unset): A developer-friendly code for this field that can be used in formulas and in the API. Must
             match the pattern ^[A-Za-z][A-Za-z0-9_]*
-        description (str | Unset): An optional more detailed sub-label for this field
+        description (None | str | Unset): Help text displayed during data entry.
         relevance_condition (str | Unset): A boolean-valued ActivityInfo formula that determines when this field is
             'relevant'. Fields that are not relevant are not displayed during data entry and must be blank.
         validation_condition (str | Unset): A boolean-valued ActivityInfo formula that determines when this field's
@@ -37,13 +40,20 @@ class FormSchemaElement:
             unique within the form Default: False.
         unique (bool | Unset): If true, the value for this field must be unique across the form's records Default:
             False.
-        read_only (bool | Unset): If true, the value for this field cannot be modified by any user (but it can be set by
-            default on record add). Default: False.
-        default_value (str | Unset): The default value for this field, set on record add
+        read_only (bool | Unset): Prevents editing during data entry when true. Defaults to false. Default: False.
+        default_value (float | GeoPointDefaultValue | list[str] | str | Unset): Literal default used when creating a
+            record. Its JSON representation depends on the field type.
         default_value_formula (str | Unset): An ActivityInfo formula that generates the default value for this field,
             set on record add
-        security_category_id (str | Unset):
+        security_category_id (str | Unset): ID of the security category assigned to this field.
         type_parameters (FormSchemaElementParameter | Unset):
+        required_condition (str | Unset): Boolean formula limiting when a required field must have a value. If omitted,
+            the requirement applies to every record.
+        validation_message (str | Unset): Message displayed when validationCondition fails; an automatic message is used
+            if omitted.
+        metadata (FormSchemaElementMetadata | Unset): Server-maintained record author: ADDED_BY or LAST_EDITED_BY.
+            Requires a read-only reference to database users, with ID _addedBy or _lastEditedBy respectively. Values cannot
+            be supplied by clients; existing records are populated from history.
     """
 
     id: str
@@ -51,7 +61,7 @@ class FormSchemaElement:
     type_: FormSchemaElementType
     required: bool = False
     code: str | Unset = UNSET
-    description: str | Unset = UNSET
+    description: None | str | Unset = UNSET
     relevance_condition: str | Unset = UNSET
     validation_condition: str | Unset = UNSET
     data_entry_visible: bool | Unset = True
@@ -59,13 +69,18 @@ class FormSchemaElement:
     key: bool | Unset = False
     unique: bool | Unset = False
     read_only: bool | Unset = False
-    default_value: str | Unset = UNSET
+    default_value: float | GeoPointDefaultValue | list[str] | str | Unset = UNSET
     default_value_formula: str | Unset = UNSET
     security_category_id: str | Unset = UNSET
     type_parameters: FormSchemaElementParameter | Unset = UNSET
+    required_condition: str | Unset = UNSET
+    validation_message: str | Unset = UNSET
+    metadata: FormSchemaElementMetadata | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        from ..models.geo_point_default_value import GeoPointDefaultValue
+
         id = self.id
 
         label = self.label
@@ -76,7 +91,11 @@ class FormSchemaElement:
 
         code = self.code
 
-        description = self.description
+        description: None | str | Unset
+        if isinstance(self.description, Unset):
+            description = UNSET
+        else:
+            description = self.description
 
         relevance_condition = self.relevance_condition
 
@@ -92,7 +111,16 @@ class FormSchemaElement:
 
         read_only = self.read_only
 
-        default_value = self.default_value
+        default_value: dict[str, Any] | float | list[str] | str | Unset
+        if isinstance(self.default_value, Unset):
+            default_value = UNSET
+        elif isinstance(self.default_value, list):
+            default_value = self.default_value
+
+        elif isinstance(self.default_value, GeoPointDefaultValue):
+            default_value = self.default_value.to_dict()
+        else:
+            default_value = self.default_value
 
         default_value_formula = self.default_value_formula
 
@@ -101,6 +129,14 @@ class FormSchemaElement:
         type_parameters: dict[str, Any] | Unset = UNSET
         if not isinstance(self.type_parameters, Unset):
             type_parameters = self.type_parameters.to_dict()
+
+        required_condition = self.required_condition
+
+        validation_message = self.validation_message
+
+        metadata: str | Unset = UNSET
+        if not isinstance(self.metadata, Unset):
+            metadata = self.metadata.value
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
@@ -138,12 +174,19 @@ class FormSchemaElement:
             field_dict["securityCategoryId"] = security_category_id
         if type_parameters is not UNSET:
             field_dict["typeParameters"] = type_parameters
+        if required_condition is not UNSET:
+            field_dict["requiredCondition"] = required_condition
+        if validation_message is not UNSET:
+            field_dict["validationMessage"] = validation_message
+        if metadata is not UNSET:
+            field_dict["metadata"] = metadata
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.form_schema_element_parameter import FormSchemaElementParameter
+        from ..models.geo_point_default_value import GeoPointDefaultValue
 
         d = dict(src_dict)
         id = d.pop("id")
@@ -156,7 +199,14 @@ class FormSchemaElement:
 
         code = d.pop("code", UNSET)
 
-        description = d.pop("description", UNSET)
+        def _parse_description(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        description = _parse_description(d.pop("description", UNSET))
 
         relevance_condition = d.pop("relevanceCondition", UNSET)
 
@@ -172,7 +222,28 @@ class FormSchemaElement:
 
         read_only = d.pop("readOnly", UNSET)
 
-        default_value = d.pop("defaultValue", UNSET)
+        def _parse_default_value(data: object) -> float | GeoPointDefaultValue | list[str] | str | Unset:
+            if isinstance(data, Unset):
+                return data
+            try:
+                if not isinstance(data, list):
+                    raise TypeError()
+                componentsschemas_form_schema_default_value_type_2 = cast(list[str], data)
+
+                return componentsschemas_form_schema_default_value_type_2
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            try:
+                if not isinstance(data, dict):
+                    raise TypeError()
+                componentsschemas_form_schema_default_value_type_3 = GeoPointDefaultValue.from_dict(data)
+
+                return componentsschemas_form_schema_default_value_type_3
+            except (TypeError, ValueError, AttributeError, KeyError):
+                pass
+            return cast(float | GeoPointDefaultValue | list[str] | str | Unset, data)
+
+        default_value = _parse_default_value(d.pop("defaultValue", UNSET))
 
         default_value_formula = d.pop("defaultValueFormula", UNSET)
 
@@ -184,6 +255,17 @@ class FormSchemaElement:
             type_parameters = UNSET
         else:
             type_parameters = FormSchemaElementParameter.from_dict(_type_parameters)
+
+        required_condition = d.pop("requiredCondition", UNSET)
+
+        validation_message = d.pop("validationMessage", UNSET)
+
+        _metadata = d.pop("metadata", UNSET)
+        metadata: FormSchemaElementMetadata | Unset
+        if isinstance(_metadata, Unset):
+            metadata = UNSET
+        else:
+            metadata = FormSchemaElementMetadata(_metadata)
 
         form_schema_element = cls(
             id=id,
@@ -203,6 +285,9 @@ class FormSchemaElement:
             default_value_formula=default_value_formula,
             security_category_id=security_category_id,
             type_parameters=type_parameters,
+            required_condition=required_condition,
+            validation_message=validation_message,
+            metadata=metadata,
         )
 
         form_schema_element.additional_properties = d

@@ -13,8 +13,8 @@ T = TypeVar("T", bound="FormSchemaElementParameterTranslation")
 class FormSchemaElementParameterTranslation:
     """
     Attributes:
-        field_id (str): The id of the field of which this field is a translation. Both fields must be of the same type.
-        languages (list[str]): The language of the translation.
+        field_id (str): ID of the associated translation field.
+        languages (list[str]): Languages configured for translation.
     """
 
     field_id: str

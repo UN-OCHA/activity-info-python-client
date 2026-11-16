@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class FormSchemaElementParameterCaptureMethodsItem(str, Enum):
+    AUDIO = "AUDIO"
     CAMERA = "CAMERA"
     FILE = "FILE"
     SIGNATURE = "SIGNATURE"

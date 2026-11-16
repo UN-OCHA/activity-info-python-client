@@ -13,6 +13,7 @@ class FormSchemaElementType(str, Enum):
     MONTH = "month"
     MULTISELECTREFERENCE = "multiselectreference"
     NARRATIVE = "NARRATIVE"
+    NOTE = "note"
     QUANTITY = "quantity"
     REFERENCE = "reference"
     REVERSEREFERENCE = "reversereference"

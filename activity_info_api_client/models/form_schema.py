@@ -21,18 +21,17 @@ class FormSchema:
     Attributes:
         id (str): The immutable CUID for this form. Must be globally unique within an ActivityInfo server
         label (str): A human-readable label for this form
-        schema_version (int): A monotonically increasing version number of this schema assigned by the server upon
-            updates
+        schema_version (str): Server-assigned schema version, increasing with each update and represented as a string.
         database_id (str): The id of the database to which this form belongs
         elements (list[FormSchemaElement]): This form's fields, section headers, and other elements.
         parent_form_id (str | Unset): The id of this form's parent, if this form is a subform. Note that subforms can
             only be created by adding a subform field to the parent form.
-        record_label_field_id (str | Unset):
+        record_label_field_id (str | Unset): ID of the field used to label this form's records.
     """
 
     id: str
     label: str
-    schema_version: int
+    schema_version: str
     database_id: str
     elements: list[FormSchemaElement]
     parent_form_id: str | Unset = UNSET

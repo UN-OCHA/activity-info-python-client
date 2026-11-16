@@ -6,8 +6,6 @@ from typing import Any, TypeVar
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
 
-from ..types import UNSET, Unset
-
 T = TypeVar("T", bound="FormSchemaElementParameterRangeItem")
 
 
@@ -15,10 +13,10 @@ T = TypeVar("T", bound="FormSchemaElementParameterRangeItem")
 class FormSchemaElementParameterRangeItem:
     """
     Attributes:
-        form_id (str | Unset):
+        form_id (str): ID of the referenced form.
     """
 
-    form_id: str | Unset = UNSET
+    form_id: str
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -26,16 +24,18 @@ class FormSchemaElementParameterRangeItem:
 
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
-        field_dict.update({})
-        if form_id is not UNSET:
-            field_dict["formId"] = form_id
+        field_dict.update(
+            {
+                "formId": form_id,
+            }
+        )
 
         return field_dict
 
     @classmethod
     def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
-        form_id = d.pop("formId", UNSET)
+        form_id = d.pop("formId")
 
         form_schema_element_parameter_range_item = cls(
             form_id=form_id,

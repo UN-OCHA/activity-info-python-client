@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "activity-info-api-client"
-version = "2.0.1"
+version = "2.0.2"
 description = "A client library for accessing ActivityInfo API"
 authors = []
 readme = "README.md"

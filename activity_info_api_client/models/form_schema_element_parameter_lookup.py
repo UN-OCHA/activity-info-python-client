@@ -13,8 +13,7 @@ T = TypeVar("T", bound="FormSchemaElementParameterLookup")
 class FormSchemaElementParameterLookup:
     """
     Attributes:
-        id (str): The immutable CUID of this lookup item. Must match the format [a-z][a-z0-9]{0,25} and be unique within
-            this field.
+        id (str): Unique identifier for this lookup configuration.
         formula (str): An ActivityInfo formula specifying the field or expression being looked up.
         lookup_label (str): Human-readable label for this lookup item.
     """
