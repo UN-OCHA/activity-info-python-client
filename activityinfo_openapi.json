@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ActivityInfo API",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "OpenAPI schema assembled from ActivityInfo documentation and API analysis"
   },
   "servers": [
@@ -2162,8 +2162,8 @@
           },
           "schemaVersion": {
             "title": "Schema Version",
-            "description": "A monotonically increasing version number of this schema assigned by the server upon updates",
-            "type": "integer"
+            "description": "Server-assigned schema version, increasing with each update and represented as a string.",
+            "type": "string"
           },
           "databaseId": {
             "title": "Database ID",
@@ -2177,7 +2177,7 @@
           },
           "recordLabelFieldId": {
             "title": "Record Label Field ID",
-            "description": "",
+            "description": "ID of the field used to label this form's records.",
             "type": "string"
           },
           "elements": {
@@ -2218,8 +2218,15 @@
           },
           "description": {
             "title": "Description",
-            "description": "An optional more detailed sub-label for this field",
-            "type": "string"
+            "description": "Help text displayed during data entry.",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "relevanceCondition": {
             "title": "Relevance Condition",
@@ -2245,7 +2252,7 @@
           },
           "required": {
             "title": "Required",
-            "description": "If true, a value for this field must be provided",
+            "description": "Requires a value when true, subject to requiredCondition when specified.",
             "type": "boolean",
             "default": false
           },
@@ -2263,14 +2270,14 @@
           },
           "readOnly": {
             "title": "Read Only",
-            "description": "If true, the value for this field cannot be modified by any user (but it can be set by default on record add).",
+            "description": "Prevents editing during data entry when true. Defaults to false.",
             "type": "boolean",
             "default": false
           },
           "defaultValue": {
             "title": "Default Value",
-            "description": "The default value for this field, set on record add",
-            "type": "string"
+            "description": "Value used to prepopulate the field when creating a record.",
+            "$ref": "#/components/schemas/FormSchemaDefaultValue"
           },
           "defaultValueFormula": {
             "title": "Default Value Formula",
@@ -2279,7 +2286,7 @@
           },
           "type": {
             "title": "Type",
-            "description": "The field type.",
+            "description": "Field type, including non-value elements such as note and section. The fortnight type is deprecated.",
             "type": "string",
             "enum": [
               "serial",
@@ -2295,6 +2302,7 @@
               "date",
               "calculated",
               "reversereference",
+              "note",
               "reference",
               "fortnight",
               "section",
@@ -2303,12 +2311,32 @@
           },
           "securityCategoryId": {
             "title": "Security Category ID",
-            "type": "string"
+            "type": "string",
+            "description": "ID of the security category assigned to this field."
           },
           "typeParameters": {
             "title": "Type Parameters",
             "description": "Additional type-specific properties of this field.",
             "$ref": "#/components/schemas/FormSchemaElementParameter"
+          },
+          "requiredCondition": {
+            "title": "Required Condition",
+            "type": "string",
+            "description": "Boolean formula limiting when a required field must have a value. If omitted, the requirement applies to every record."
+          },
+          "validationMessage": {
+            "title": "Validation Message",
+            "type": "string",
+            "description": "Message displayed when validationCondition fails; an automatic message is used if omitted."
+          },
+          "metadata": {
+            "title": "Metadata",
+            "type": "string",
+            "enum": [
+              "ADDED_BY",
+              "LAST_EDITED_BY"
+            ],
+            "description": "Server-maintained record author: ADDED_BY or LAST_EDITED_BY. Requires a read-only reference to database users, with ID _addedBy or _lastEditedBy respectively. Values cannot be supplied by clients; existing records are populated from history."
           }
         },
         "required": [
@@ -2329,7 +2357,7 @@
           },
           "digits": {
             "title": "Digits",
-            "description": "For fields of type 'serial', indicates how many digits long the generated serial number will be",
+            "description": "Number of digits used for the numeric portion of a serial value.",
             "type": "integer"
           },
           "units": {
@@ -2339,7 +2367,7 @@
           },
           "aggregation": {
             "title": "Aggregation",
-            "description": "For fields of type 'quantity', describes the aggregation method e.g. 'sum'. Not currently used(?)",
+            "description": "Legacy quantity aggregation setting, such as 'sum'; current server behavior is unverified.",
             "type": "string"
           },
           "inputMask": {
@@ -2349,7 +2377,7 @@
           },
           "barcode": {
             "title": "Barcode",
-            "description": "For fields of type 'FREE_TEXT' (user type 'Text' or 'Barcode'), true when field is barcode",
+            "description": "Enables barcode-scanner input for a text field during data entry.",
             "type": "boolean"
           },
           "formula": {
@@ -2359,7 +2387,7 @@
           },
           "cardinality": {
             "title": "Cardinality",
-            "description": "For fields of type 'enumerated' (user type 'Single selection' or 'Multiple selection'), indicates whether single or multiple select",
+            "description": "For enumerated and attachment fields, single permits at most one value; multiple permits multiple values.",
             "type": "string",
             "enum": [
               "single",
@@ -2368,7 +2396,7 @@
           },
           "values": {
             "title": "Values",
-            "description": "For fields of type 'enumerated' (user type 'Single selection' or 'Multiple selection'), provided the list of valid choices",
+            "description": "Choices available for an enumerated field.",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/FormSchemaElementParameterValue"
@@ -2376,30 +2404,37 @@
           },
           "presentation": {
             "title": "Presentation",
-            "description": "For fields of type 'enumerated' (user type 'Single selection' or 'Multiple selection'), indicate whether shown as dropdown or not. Only relevant for multiple selection, i.e. where cardinality: multiple",
+            "description": "Display style for enumerated choices: automatic, radio_button, or dropdown.",
             "type": "string",
             "enum": [
               "automatic",
+              "radio_button",
               "dropdown"
             ]
           },
           "range": {
             "title": "Range",
-            "description": "For fields of type 'reference' or 'multiselectreference' (user type 'Reference', 'User', or 'Multiple Reference'), provides the id of the form that this field references. For 'User', this reference is '{dbid}@users'.",
+            "description": "Referenced form for reference or multiselectreference fields. Contains exactly one entry; user references target '{dbid}@users'.",
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
                 "formId": {
                   "title": "Form ID",
-                  "type": "string"
+                  "type": "string",
+                  "description": "ID of the referenced form."
                 }
-              }
-            }
+              },
+              "required": [
+                "formId"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
           },
           "lookupConfigs": {
             "title": "Lookup Configs",
-            "description": "For fields of type 'reference', specifies the lookup configuration for the field.",
+            "description": "Custom record lookups for a reference field, pairing formulas with labels.",
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/FormSchemaElementParameterLookup"
@@ -2407,31 +2442,33 @@
           },
           "formId": {
             "title": "Form ID",
-            "description": "For fields of type 'subform' and 'reversereference', provides the id of the form/subform that this field references",
+            "description": "For subform fields, the child form ID. For reversereference fields, the form containing the reference back to this form.",
             "type": "string"
           },
           "fieldId": {
             "title": "Field ID",
-            "description": "For fields of type 'reversereference', provides the id of the reference field on the form that this field references",
+            "description": "For reversereference fields, the reference field on formId that points back to this form.",
             "type": "string"
           },
           "captureMethods": {
             "title": "Capture Methods",
-            "description": "For fields of type 'attachment', indicates which types of attachments can be added.",
+            "description": "Attachment input methods enabled during data entry: FILE, SIGNATURE, CAMERA, or AUDIO.",
             "type": "array",
             "items": {
               "type": "string",
               "enum": [
                 "CAMERA",
                 "SIGNATURE",
-                "FILE"
+                "FILE",
+                "AUDIO"
               ]
             }
           },
           "requiredAccuracy": {
             "title": "Required Accuracy",
-            "description": "For fields of type 'geopoint', indicates the accuracy required when automatically specifying location.",
-            "type": "integer"
+            "description": "Required GPS accuracy in meters for geopoint capture.",
+            "type": "number",
+            "format": "float"
           },
           "manualEntryAllowed": {
             "title": "Manual Entry Allowed",
@@ -2445,8 +2482,23 @@
           },
           "translationConfig": {
             "title": "Translation Config",
-            "description": "For fields of type 'FREE_TEXT', 'NARRATIVE' or 'calculated', the translation config specifies which other field this is a translation of, and into which language.",
+            "description": "Links a FREE_TEXT, NARRATIVE, or calculated field to its translation field.",
             "$ref": "#/components/schemas/FormSchemaElementParameterTranslation"
+          },
+          "fileTypes": {
+            "title": "File Types",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "PDF",
+                "IMAGE",
+                "OFFICE_DOCUMENT",
+                "VIDEO",
+                "AUDIO"
+              ]
+            },
+            "description": "Accepted attachment categories for FILE capture: PDF, IMAGE, OFFICE_DOCUMENT, VIDEO, AUDIO. Omitted or empty accepts any type. Content enforcement currently applies on self-managed deployments."
           }
         }
       },
@@ -2456,7 +2508,7 @@
         "properties": {
           "id": {
             "title": "ID",
-            "description": "The immutable CUID of this lookup item. Must match the format [a-z][a-z0-9]{0,25} and be unique within this field.",
+            "description": "Unique identifier for this lookup configuration.",
             "type": "string"
           },
           "formula": {
@@ -2482,12 +2534,12 @@
         "properties": {
           "fieldId": {
             "title": "Field ID",
-            "description": "The id of the field of which this field is a translation. Both fields must be of the same type.",
+            "description": "ID of the associated translation field.",
             "type": "string"
           },
           "languages": {
             "title": "Languages",
-            "description": "The language of the translation.",
+            "description": "Languages configured for translation.",
             "type": "array",
             "items": {
               "title": "Language",
@@ -3428,6 +3480,49 @@
         },
         "required": [
           "id"
+        ]
+      },
+      "FormSchemaDefaultValue": {
+        "description": "Literal default used when creating a record. Its JSON representation depends on the field type.",
+        "oneOf": [
+          {
+            "type": "string",
+            "description": "Text, a single selection option ID, a qualified reference ID, or a date or period string."
+          },
+          {
+            "type": "number",
+            "description": "Default value for a quantity field."
+          },
+          {
+            "type": "array",
+            "description": "Default option IDs for a multiple-selection field.",
+            "items": {
+              "type": "string"
+            }
+          },
+          {
+            "$ref": "#/components/schemas/GeoPointDefaultValue"
+          }
+        ]
+      },
+      "GeoPointDefaultValue": {
+        "type": "object",
+        "description": "Default coordinates for a geographic point field.",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude"
         ]
       }
     },
