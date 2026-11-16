@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import Any, Self, TypeVar, cast
+from typing import Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -19,20 +19,24 @@ class Permission:
 
         Attributes:
             operation (PermissionOperation): One of a number of predetermined values
-            filter_ (str | Unset): A formula which restricts a permission to specific records. Only record-level permissions
-                can be filtered.
+            filter_ (None | str | Unset): A formula which restricts a permission to specific records. Only record-level
+                permissions can be filtered.
             security_categories (list[str] | Unset): The security categories that have been defined for this permission.
     """
 
     operation: PermissionOperation
-    filter_: str | Unset = UNSET
+    filter_: None | str | Unset = UNSET
     security_categories: list[str] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         operation = self.operation.value
 
-        filter_ = self.filter_
+        filter_: None | str | Unset
+        if isinstance(self.filter_, Unset):
+            filter_ = UNSET
+        else:
+            filter_ = self.filter_
 
         security_categories: list[str] | Unset = UNSET
         if not isinstance(self.security_categories, Unset):
@@ -53,11 +57,18 @@ class Permission:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         d = dict(src_dict)
         operation = PermissionOperation(d.pop("operation"))
 
-        filter_ = d.pop("filter", UNSET)
+        def _parse_filter_(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        filter_ = _parse_filter_(d.pop("filter", UNSET))
 
         security_categories = cast(list[str], d.pop("securityCategories", UNSET))
 

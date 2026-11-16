@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar, cast
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -45,9 +45,10 @@ class Database:
             on which features are avialable within this database.
         description (str | Unset):
         language (str | Unset): Current database language
-        original_language (str | Unset): Original database language
+        original_language (None | str | Unset): Original database language
         languages (list[str] | Unset): The list of languages that have been defined for this database, including the
             original language, if set, and any translations.
+        features (list[str] | Unset): The features enabled for this database.
         locks (list[DatabaseLock] | Unset): The record locks that have been defined on this database.
         grants (list[Grant] | Unset): The direct (non-role) permission grants that have been made to the requesting user
             for this database.
@@ -69,8 +70,9 @@ class Database:
     billing_plan: str
     description: str | Unset = UNSET
     language: str | Unset = UNSET
-    original_language: str | Unset = UNSET
+    original_language: None | str | Unset = UNSET
     languages: list[str] | Unset = UNSET
+    features: list[str] | Unset = UNSET
     locks: list[DatabaseLock] | Unset = UNSET
     grants: list[Grant] | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -123,11 +125,19 @@ class Database:
 
         language = self.language
 
-        original_language = self.original_language
+        original_language: None | str | Unset
+        if isinstance(self.original_language, Unset):
+            original_language = UNSET
+        else:
+            original_language = self.original_language
 
         languages: list[str] | Unset = UNSET
         if not isinstance(self.languages, Unset):
             languages = self.languages
+
+        features: list[str] | Unset = UNSET
+        if not isinstance(self.features, Unset):
+            features = self.features
 
         locks: list[dict[str, Any]] | Unset = UNSET
         if not isinstance(self.locks, Unset):
@@ -171,6 +181,8 @@ class Database:
             field_dict["originalLanguage"] = original_language
         if languages is not UNSET:
             field_dict["languages"] = languages
+        if features is not UNSET:
+            field_dict["features"] = features
         if locks is not UNSET:
             field_dict["locks"] = locks
         if grants is not UNSET:
@@ -179,7 +191,7 @@ class Database:
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.database_lock import DatabaseLock
         from ..models.database_resource import DatabaseResource
         from ..models.database_role import DatabaseRole
@@ -230,9 +242,7 @@ class Database:
         security_categories = []
         _security_categories = d.pop("securityCategories")
         for security_categories_item_data in _security_categories:
-            security_categories_item = SecurityCategory.from_dict(
-                security_categories_item_data
-            )
+            security_categories_item = SecurityCategory.from_dict(security_categories_item_data)
 
             security_categories.append(security_categories_item)
 
@@ -251,9 +261,18 @@ class Database:
 
         language = d.pop("language", UNSET)
 
-        original_language = d.pop("originalLanguage", UNSET)
+        def _parse_original_language(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        original_language = _parse_original_language(d.pop("originalLanguage", UNSET))
 
         languages = cast(list[str], d.pop("languages", UNSET))
+
+        features = cast(list[str], d.pop("features", UNSET))
 
         _locks = d.pop("locks", UNSET)
         locks: list[DatabaseLock] | Unset = UNSET
@@ -292,6 +311,7 @@ class Database:
             language=language,
             original_language=original_language,
             languages=languages,
+            features=features,
             locks=locks,
             grants=grants,
         )

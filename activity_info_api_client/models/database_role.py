@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from typing import TYPE_CHECKING, Any, Self, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 from attrs import define as _attrs_define
 from attrs import field as _attrs_field
@@ -33,6 +33,8 @@ class DatabaseRole:
         grants (list[Grant] | Unset):
         version (int | Unset):  Default: 0.
         grant_based (bool | Unset):  Default: True.
+        assignable_roles (list[str] | Unset): The role ids that users assigned this role can assign to other users.
+        assign_any_role (bool | Unset): Whether users assigned this role can assign any role to other users.
     """
 
     id: str
@@ -43,6 +45,8 @@ class DatabaseRole:
     grants: list[Grant] | Unset = UNSET
     version: int | Unset = 0
     grant_based: bool | Unset = True
+    assignable_roles: list[str] | Unset = UNSET
+    assign_any_role: bool | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -82,6 +86,12 @@ class DatabaseRole:
 
         grant_based = self.grant_based
 
+        assignable_roles: list[str] | Unset = UNSET
+        if not isinstance(self.assignable_roles, Unset):
+            assignable_roles = self.assignable_roles
+
+        assign_any_role = self.assign_any_role
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -102,11 +112,15 @@ class DatabaseRole:
             field_dict["version"] = version
         if grant_based is not UNSET:
             field_dict["grantBased"] = grant_based
+        if assignable_roles is not UNSET:
+            field_dict["assignableRoles"] = assignable_roles
+        if assign_any_role is not UNSET:
+            field_dict["assignAnyRole"] = assign_any_role
 
         return field_dict
 
     @classmethod
-    def from_dict(cls, src_dict: Mapping[str, Any]) -> Self:
+    def from_dict(cls: type[T], src_dict: Mapping[str, Any]) -> T:
         from ..models.database_role_filter import DatabaseRoleFilter
         from ..models.database_role_parameter import DatabaseRoleParameter
         from ..models.grant import Grant
@@ -157,6 +171,10 @@ class DatabaseRole:
 
         grant_based = d.pop("grantBased", UNSET)
 
+        assignable_roles = cast(list[str], d.pop("assignableRoles", UNSET))
+
+        assign_any_role = d.pop("assignAnyRole", UNSET)
+
         database_role = cls(
             id=id,
             label=label,
@@ -166,6 +184,8 @@ class DatabaseRole:
             grants=grants,
             version=version,
             grant_based=grant_based,
+            assignable_roles=assignable_roles,
+            assign_any_role=assign_any_role,
         )
 
         database_role.additional_properties = d
