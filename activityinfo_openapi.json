@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ActivityInfo API",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "description": "OpenAPI schema assembled from ActivityInfo documentation and API analysis"
   },
   "servers": [
@@ -1326,7 +1326,14 @@
           "originalLanguage": {
             "title": "Original Language",
             "description": "Original database language",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "languages": {
             "title": "Languages",
@@ -1335,6 +1342,14 @@
             "items": {
               "title": "Language",
               "description": "The two-letter ISO 639-1 code for the language, e.g. 'en' for English.",
+              "type": "string"
+            }
+          },
+          "features": {
+            "title": "Features",
+            "description": "The features enabled for this database.",
+            "type": "array",
+            "items": {
               "type": "string"
             }
           },
@@ -1848,6 +1863,19 @@
             "description": "",
             "type": "boolean",
             "default": true
+          },
+          "assignableRoles": {
+            "title": "Assignable Roles",
+            "description": "The role ids that users assigned this role can assign to other users.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "assignAnyRole": {
+            "title": "Assign Any Role",
+            "description": "Whether users assigned this role can assign any role to other users.",
+            "type": "boolean"
           }
         },
         "required": [
@@ -2745,6 +2773,7 @@
               "PUBLISH_REPORTS",
               "MANAGE_ROLES",
               "MANAGE_AUTOMATIONS",
+              "SECURITY_CONTACT",
               "MANAGE_TRANSLATIONS",
               "RESOLVE_DUPLICATES",
               "SHARE_VIEWS",
@@ -2756,7 +2785,14 @@
           "filter": {
             "title": "Filter",
             "description": "A formula which restricts a permission to specific records. Only record-level permissions can be filtered.",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "securityCategories": {
             "title": "Security Categories",
