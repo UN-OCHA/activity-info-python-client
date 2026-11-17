@@ -28,6 +28,8 @@ from .field_condition_operations_item import FieldConditionOperationsItem
 from .field_condition_rule import FieldConditionRule
 from .form import Form
 from .form_permissions import FormPermissions
+from .form_record import FormRecord
+from .form_record_fields import FormRecordFields
 from .form_schema import FormSchema
 from .form_schema_element import FormSchemaElement
 from .form_schema_element_metadata import FormSchemaElementMetadata
@@ -115,6 +117,8 @@ __all__ = (
     "FieldConditionRule",
     "Form",
     "FormPermissions",
+    "FormRecord",
+    "FormRecordFields",
     "FormSchema",
     "FormSchemaElement",
     "FormSchemaElementMetadata",

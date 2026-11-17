@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ActivityInfo API",
-    "version": "2.0.3",
+    "version": "2.0.4",
     "description": "OpenAPI schema assembled from ActivityInfo documentation and API analysis"
   },
   "servers": [
@@ -637,6 +637,55 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/form/{form_id}/record/{record_id}": {
+      "get": {
+        "operationId": "get_record",
+        "summary": "Get Record",
+        "description": "Retrieve a single record from a form.",
+        "parameters": [
+          {
+            "name": "form_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "record_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormRecord"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "AUTHENTICATION_REQUIRED - The request must be authenticated"
+          },
+          "403": {
+            "description": "FORBIDDEN - Permission denied"
+          },
+          "404": {
+            "description": "NOT_FOUND - The resource could not be found"
+          },
+          "410": {
+            "description": "DELETED - The resource has been deleted"
           }
         }
       }
@@ -3064,6 +3113,39 @@
         },
         "required": [
           "rootFormId"
+        ]
+      },
+      "FormRecord": {
+        "title": "FormRecord",
+        "type": "object",
+        "properties": {
+          "formId": {
+            "title": "Form ID",
+            "type": "string"
+          },
+          "recordId": {
+            "title": "Record ID",
+            "type": "string"
+          },
+          "parentRecordId": {
+            "title": "Parent Record ID",
+            "type": "string"
+          },
+          "lastEditTime": {
+            "title": "Last Edit Time",
+            "type": "number"
+          },
+          "fields": {
+            "title": "Fields",
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "formId",
+          "recordId",
+          "lastEditTime",
+          "fields"
         ]
       },
       "RecordUpdateChange": {
