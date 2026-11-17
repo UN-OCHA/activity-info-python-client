@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ActivityInfo API",
-    "version": "2.0.2",
+    "version": "2.0.3",
     "description": "OpenAPI schema assembled from ActivityInfo documentation and API analysis"
   },
   "servers": [
@@ -2016,11 +2016,13 @@
           },
           "schema": {
             "title": "Schema",
-            "$ref": "#/components/schemas/FormSchema"
+            "$ref": "#/components/schemas/FormSchema",
+            "description": "Form schema, omitted when the form is deleted or inaccessible."
           },
           "schemaVersion": {
             "title": "Schema Version",
-            "type": "integer"
+            "type": "integer",
+            "description": "Server-assigned schema version, omitted when the form is deleted or inaccessible."
           },
           "permissions": {
             "title": "Permissions",
@@ -2044,8 +2046,6 @@
         },
         "required": [
           "id",
-          "schema",
-          "schemaVersion",
           "permissions"
         ]
       },
@@ -2059,7 +2059,14 @@
           },
           "viewFilter": {
             "title": "View Filter",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "createRecord": {
             "title": "Create Record",
@@ -2067,7 +2074,14 @@
           },
           "createFilter": {
             "title": "Create Filter",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "editRecord": {
             "title": "Edit Record",
@@ -2075,7 +2089,14 @@
           },
           "editFilter": {
             "title": "Edit Filter",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "deleteRecord": {
             "title": "Delete Record",
@@ -2083,7 +2104,14 @@
           },
           "deleteFilter": {
             "title": "Delete Filter",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "bulkDelete": {
             "title": "Bulk Delete",
@@ -2095,10 +2123,6 @@
           },
           "resolveDuplicates": {
             "title": "Resolve Duplicates",
-            "type": "boolean"
-          },
-          "manageImportConfigs": {
-            "title": "Manage Import Configs",
             "type": "boolean"
           },
           "updateSchema": {
@@ -2137,6 +2161,10 @@
             "items": {
               "$ref": "#/components/schemas/FieldCondition"
             }
+          },
+          "manageImportConfigurations": {
+            "title": "Manage Import Configurations",
+            "type": "boolean"
           }
         },
         "required": [
@@ -2162,8 +2190,8 @@
           },
           "schemaVersion": {
             "title": "Schema Version",
-            "description": "Server-assigned schema version, increasing with each update and represented as a string.",
-            "type": "string"
+            "description": "Server-assigned schema version, increasing with each update.",
+            "type": "integer"
           },
           "databaseId": {
             "title": "Database ID",
@@ -2209,7 +2237,14 @@
           "code": {
             "title": "Code",
             "description": "A developer-friendly code for this field that can be used in formulas and in the API. Must match the pattern ^[A-Za-z][A-Za-z0-9_]*",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "label": {
             "title": "Label",
@@ -2231,12 +2266,26 @@
           "relevanceCondition": {
             "title": "Relevance Condition",
             "description": "A boolean-valued ActivityInfo formula that determines when this field is 'relevant'. Fields that are not relevant are not displayed during data entry and must be blank.",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "validationCondition": {
             "title": "Validation Condition",
             "description": "A boolean-valued ActivityInfo formula that determines when this field's value is valid.",
-            "type": "string"
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "dataEntryVisible": {
             "title": "Data Entry Visible",
@@ -2321,8 +2370,15 @@
           },
           "requiredCondition": {
             "title": "Required Condition",
-            "type": "string",
-            "description": "Boolean formula limiting when a required field must have a value. If omitted, the requirement applies to every record."
+            "description": "Boolean formula limiting when a required field must have a value. If omitted, the requirement applies to every record.",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "validationMessage": {
             "title": "Validation Message",
