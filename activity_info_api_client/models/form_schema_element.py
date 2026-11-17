@@ -27,13 +27,13 @@ class FormSchemaElement:
         required (bool): Requires a value when true, subject to requiredCondition when specified. Default: False.
         type_ (FormSchemaElementType): Field type, including non-value elements such as note and section. The fortnight
             type is deprecated.
-        code (str | Unset): A developer-friendly code for this field that can be used in formulas and in the API. Must
-            match the pattern ^[A-Za-z][A-Za-z0-9_]*
+        code (None | str | Unset): A developer-friendly code for this field that can be used in formulas and in the API.
+            Must match the pattern ^[A-Za-z][A-Za-z0-9_]*
         description (None | str | Unset): Help text displayed during data entry.
-        relevance_condition (str | Unset): A boolean-valued ActivityInfo formula that determines when this field is
-            'relevant'. Fields that are not relevant are not displayed during data entry and must be blank.
-        validation_condition (str | Unset): A boolean-valued ActivityInfo formula that determines when this field's
-            value is valid.
+        relevance_condition (None | str | Unset): A boolean-valued ActivityInfo formula that determines when this field
+            is 'relevant'. Fields that are not relevant are not displayed during data entry and must be blank.
+        validation_condition (None | str | Unset): A boolean-valued ActivityInfo formula that determines when this
+            field's value is valid.
         data_entry_visible (bool | Unset): If false, this field is not shown in data entry Default: True.
         table_visible (bool | Unset): If false, this field is not shown by default in the table view Default: True.
         key (bool | Unset): If true, this field is part of the form's natural key fields whose combination must be
@@ -47,8 +47,8 @@ class FormSchemaElement:
             set on record add
         security_category_id (str | Unset): ID of the security category assigned to this field.
         type_parameters (FormSchemaElementParameter | Unset):
-        required_condition (str | Unset): Boolean formula limiting when a required field must have a value. If omitted,
-            the requirement applies to every record.
+        required_condition (None | str | Unset): Boolean formula limiting when a required field must have a value. If
+            omitted, the requirement applies to every record.
         validation_message (str | Unset): Message displayed when validationCondition fails; an automatic message is used
             if omitted.
         metadata (FormSchemaElementMetadata | Unset): Server-maintained record author: ADDED_BY or LAST_EDITED_BY.
@@ -60,10 +60,10 @@ class FormSchemaElement:
     label: str
     type_: FormSchemaElementType
     required: bool = False
-    code: str | Unset = UNSET
+    code: None | str | Unset = UNSET
     description: None | str | Unset = UNSET
-    relevance_condition: str | Unset = UNSET
-    validation_condition: str | Unset = UNSET
+    relevance_condition: None | str | Unset = UNSET
+    validation_condition: None | str | Unset = UNSET
     data_entry_visible: bool | Unset = True
     table_visible: bool | Unset = True
     key: bool | Unset = False
@@ -73,7 +73,7 @@ class FormSchemaElement:
     default_value_formula: str | Unset = UNSET
     security_category_id: str | Unset = UNSET
     type_parameters: FormSchemaElementParameter | Unset = UNSET
-    required_condition: str | Unset = UNSET
+    required_condition: None | str | Unset = UNSET
     validation_message: str | Unset = UNSET
     metadata: FormSchemaElementMetadata | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
@@ -89,7 +89,11 @@ class FormSchemaElement:
 
         type_ = self.type_.value
 
-        code = self.code
+        code: None | str | Unset
+        if isinstance(self.code, Unset):
+            code = UNSET
+        else:
+            code = self.code
 
         description: None | str | Unset
         if isinstance(self.description, Unset):
@@ -97,9 +101,17 @@ class FormSchemaElement:
         else:
             description = self.description
 
-        relevance_condition = self.relevance_condition
+        relevance_condition: None | str | Unset
+        if isinstance(self.relevance_condition, Unset):
+            relevance_condition = UNSET
+        else:
+            relevance_condition = self.relevance_condition
 
-        validation_condition = self.validation_condition
+        validation_condition: None | str | Unset
+        if isinstance(self.validation_condition, Unset):
+            validation_condition = UNSET
+        else:
+            validation_condition = self.validation_condition
 
         data_entry_visible = self.data_entry_visible
 
@@ -130,7 +142,11 @@ class FormSchemaElement:
         if not isinstance(self.type_parameters, Unset):
             type_parameters = self.type_parameters.to_dict()
 
-        required_condition = self.required_condition
+        required_condition: None | str | Unset
+        if isinstance(self.required_condition, Unset):
+            required_condition = UNSET
+        else:
+            required_condition = self.required_condition
 
         validation_message = self.validation_message
 
@@ -197,7 +213,14 @@ class FormSchemaElement:
 
         type_ = FormSchemaElementType(d.pop("type"))
 
-        code = d.pop("code", UNSET)
+        def _parse_code(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        code = _parse_code(d.pop("code", UNSET))
 
         def _parse_description(data: object) -> None | str | Unset:
             if data is None:
@@ -208,9 +231,23 @@ class FormSchemaElement:
 
         description = _parse_description(d.pop("description", UNSET))
 
-        relevance_condition = d.pop("relevanceCondition", UNSET)
+        def _parse_relevance_condition(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
 
-        validation_condition = d.pop("validationCondition", UNSET)
+        relevance_condition = _parse_relevance_condition(d.pop("relevanceCondition", UNSET))
+
+        def _parse_validation_condition(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        validation_condition = _parse_validation_condition(d.pop("validationCondition", UNSET))
 
         data_entry_visible = d.pop("dataEntryVisible", UNSET)
 
@@ -256,7 +293,14 @@ class FormSchemaElement:
         else:
             type_parameters = FormSchemaElementParameter.from_dict(_type_parameters)
 
-        required_condition = d.pop("requiredCondition", UNSET)
+        def _parse_required_condition(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        required_condition = _parse_required_condition(d.pop("requiredCondition", UNSET))
 
         validation_message = d.pop("validationMessage", UNSET)
 

@@ -21,18 +21,18 @@ class Form:
     """
     Attributes:
         id (str): The id of the form
-        schema (FormSchema):
-        schema_version (int):
         permissions (FormPermissions):
+        schema (FormSchema | Unset):
+        schema_version (int | Unset): Server-assigned schema version, omitted when the form is deleted or inaccessible.
         visible (bool | Unset): True if the form is visible to the authenticated user
         deleted (bool | Unset): True if the form has been deleted
         suspended (bool | Unset): True if the form belongs to a suspended database.
     """
 
     id: str
-    schema: FormSchema
-    schema_version: int
     permissions: FormPermissions
+    schema: FormSchema | Unset = UNSET
+    schema_version: int | Unset = UNSET
     visible: bool | Unset = UNSET
     deleted: bool | Unset = UNSET
     suspended: bool | Unset = UNSET
@@ -41,11 +41,13 @@ class Form:
     def to_dict(self) -> dict[str, Any]:
         id = self.id
 
-        schema = self.schema.to_dict()
+        permissions = self.permissions.to_dict()
+
+        schema: dict[str, Any] | Unset = UNSET
+        if not isinstance(self.schema, Unset):
+            schema = self.schema.to_dict()
 
         schema_version = self.schema_version
-
-        permissions = self.permissions.to_dict()
 
         visible = self.visible
 
@@ -58,11 +60,13 @@ class Form:
         field_dict.update(
             {
                 "id": id,
-                "schema": schema,
-                "schemaVersion": schema_version,
                 "permissions": permissions,
             }
         )
+        if schema is not UNSET:
+            field_dict["schema"] = schema
+        if schema_version is not UNSET:
+            field_dict["schemaVersion"] = schema_version
         if visible is not UNSET:
             field_dict["visible"] = visible
         if deleted is not UNSET:
@@ -80,11 +84,16 @@ class Form:
         d = dict(src_dict)
         id = d.pop("id")
 
-        schema = FormSchema.from_dict(d.pop("schema"))
-
-        schema_version = d.pop("schemaVersion")
-
         permissions = FormPermissions.from_dict(d.pop("permissions"))
+
+        _schema = d.pop("schema", UNSET)
+        schema: FormSchema | Unset
+        if isinstance(_schema, Unset):
+            schema = UNSET
+        else:
+            schema = FormSchema.from_dict(_schema)
+
+        schema_version = d.pop("schemaVersion", UNSET)
 
         visible = d.pop("visible", UNSET)
 
@@ -94,9 +103,9 @@ class Form:
 
         form = cls(
             id=id,
+            permissions=permissions,
             schema=schema,
             schema_version=schema_version,
-            permissions=permissions,
             visible=visible,
             deleted=deleted,
             suspended=suspended,

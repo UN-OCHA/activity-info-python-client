@@ -39,7 +39,7 @@ class FormSchemaDefaultsTests(unittest.TestCase):
                 field["defaultValueFormula"] = formula
             elements.append(field)
         payload = {"id": "form", "label": "Defaults", "databaseId": "database",
-                   "schemaVersion": "4", "elements": elements}
+                   "schemaVersion": 4, "elements": elements}
         response = httpx.Response(200, json=payload)
         model = get_form_schema._parse_response(client=Client(base_url="https://example.org"), response=response)
         self.assertIsInstance(model, FormSchema)

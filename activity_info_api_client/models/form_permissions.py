@@ -24,14 +24,13 @@ class FormPermissions:
         create_record (bool):
         edit_record (bool):
         delete_record (bool):
-        view_filter (str | Unset):
-        create_filter (str | Unset):
-        edit_filter (str | Unset):
-        delete_filter (str | Unset):
+        view_filter (None | str | Unset):
+        create_filter (None | str | Unset):
+        edit_filter (None | str | Unset):
+        delete_filter (None | str | Unset):
         bulk_delete (bool | Unset):
         export_records (bool | Unset):
         resolve_duplicates (bool | Unset):
-        manage_import_configs (bool | Unset):
         update_schema (bool | Unset):
         collection_links (bool | Unset):
         public_form (bool | Unset):
@@ -39,20 +38,20 @@ class FormPermissions:
         security_categories (list[str] | Unset):
         locks (list[DatabaseLock] | Unset):
         field_level_conditions (list[FieldCondition] | Unset):
+        manage_import_configurations (bool | Unset):
     """
 
     view: bool
     create_record: bool
     edit_record: bool
     delete_record: bool
-    view_filter: str | Unset = UNSET
-    create_filter: str | Unset = UNSET
-    edit_filter: str | Unset = UNSET
-    delete_filter: str | Unset = UNSET
+    view_filter: None | str | Unset = UNSET
+    create_filter: None | str | Unset = UNSET
+    edit_filter: None | str | Unset = UNSET
+    delete_filter: None | str | Unset = UNSET
     bulk_delete: bool | Unset = UNSET
     export_records: bool | Unset = UNSET
     resolve_duplicates: bool | Unset = UNSET
-    manage_import_configs: bool | Unset = UNSET
     update_schema: bool | Unset = UNSET
     collection_links: bool | Unset = UNSET
     public_form: bool | Unset = UNSET
@@ -60,6 +59,7 @@ class FormPermissions:
     security_categories: list[str] | Unset = UNSET
     locks: list[DatabaseLock] | Unset = UNSET
     field_level_conditions: list[FieldCondition] | Unset = UNSET
+    manage_import_configurations: bool | Unset = UNSET
     additional_properties: dict[str, Any] = _attrs_field(init=False, factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
@@ -71,21 +71,35 @@ class FormPermissions:
 
         delete_record = self.delete_record
 
-        view_filter = self.view_filter
+        view_filter: None | str | Unset
+        if isinstance(self.view_filter, Unset):
+            view_filter = UNSET
+        else:
+            view_filter = self.view_filter
 
-        create_filter = self.create_filter
+        create_filter: None | str | Unset
+        if isinstance(self.create_filter, Unset):
+            create_filter = UNSET
+        else:
+            create_filter = self.create_filter
 
-        edit_filter = self.edit_filter
+        edit_filter: None | str | Unset
+        if isinstance(self.edit_filter, Unset):
+            edit_filter = UNSET
+        else:
+            edit_filter = self.edit_filter
 
-        delete_filter = self.delete_filter
+        delete_filter: None | str | Unset
+        if isinstance(self.delete_filter, Unset):
+            delete_filter = UNSET
+        else:
+            delete_filter = self.delete_filter
 
         bulk_delete = self.bulk_delete
 
         export_records = self.export_records
 
         resolve_duplicates = self.resolve_duplicates
-
-        manage_import_configs = self.manage_import_configs
 
         update_schema = self.update_schema
 
@@ -113,6 +127,8 @@ class FormPermissions:
                 field_level_conditions_item = field_level_conditions_item_data.to_dict()
                 field_level_conditions.append(field_level_conditions_item)
 
+        manage_import_configurations = self.manage_import_configurations
+
         field_dict: dict[str, Any] = {}
         field_dict.update(self.additional_properties)
         field_dict.update(
@@ -137,8 +153,6 @@ class FormPermissions:
             field_dict["exportRecords"] = export_records
         if resolve_duplicates is not UNSET:
             field_dict["resolveDuplicates"] = resolve_duplicates
-        if manage_import_configs is not UNSET:
-            field_dict["manageImportConfigs"] = manage_import_configs
         if update_schema is not UNSET:
             field_dict["updateSchema"] = update_schema
         if collection_links is not UNSET:
@@ -153,6 +167,8 @@ class FormPermissions:
             field_dict["locks"] = locks
         if field_level_conditions is not UNSET:
             field_dict["fieldLevelConditions"] = field_level_conditions
+        if manage_import_configurations is not UNSET:
+            field_dict["manageImportConfigurations"] = manage_import_configurations
 
         return field_dict
 
@@ -170,21 +186,47 @@ class FormPermissions:
 
         delete_record = d.pop("deleteRecord")
 
-        view_filter = d.pop("viewFilter", UNSET)
+        def _parse_view_filter(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
 
-        create_filter = d.pop("createFilter", UNSET)
+        view_filter = _parse_view_filter(d.pop("viewFilter", UNSET))
 
-        edit_filter = d.pop("editFilter", UNSET)
+        def _parse_create_filter(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
 
-        delete_filter = d.pop("deleteFilter", UNSET)
+        create_filter = _parse_create_filter(d.pop("createFilter", UNSET))
+
+        def _parse_edit_filter(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        edit_filter = _parse_edit_filter(d.pop("editFilter", UNSET))
+
+        def _parse_delete_filter(data: object) -> None | str | Unset:
+            if data is None:
+                return data
+            if isinstance(data, Unset):
+                return data
+            return cast(None | str | Unset, data)
+
+        delete_filter = _parse_delete_filter(d.pop("deleteFilter", UNSET))
 
         bulk_delete = d.pop("bulkDelete", UNSET)
 
         export_records = d.pop("exportRecords", UNSET)
 
         resolve_duplicates = d.pop("resolveDuplicates", UNSET)
-
-        manage_import_configs = d.pop("manageImportConfigs", UNSET)
 
         update_schema = d.pop("updateSchema", UNSET)
 
@@ -214,6 +256,8 @@ class FormPermissions:
 
                 field_level_conditions.append(field_level_conditions_item)
 
+        manage_import_configurations = d.pop("manageImportConfigurations", UNSET)
+
         form_permissions = cls(
             view=view,
             create_record=create_record,
@@ -226,7 +270,6 @@ class FormPermissions:
             bulk_delete=bulk_delete,
             export_records=export_records,
             resolve_duplicates=resolve_duplicates,
-            manage_import_configs=manage_import_configs,
             update_schema=update_schema,
             collection_links=collection_links,
             public_form=public_form,
@@ -234,6 +277,7 @@ class FormPermissions:
             security_categories=security_categories,
             locks=locks,
             field_level_conditions=field_level_conditions,
+            manage_import_configurations=manage_import_configurations,
         )
 
         form_permissions.additional_properties = d
